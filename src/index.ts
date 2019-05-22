@@ -40,14 +40,14 @@ const extension: JupyterLabPlugin<void> = {
 
 
     let baseUrl = PageConfig.getOption('baseUrl');
-    let endpoint = URLExt.join(baseUrl, "/metrics");
+    let endpoint = URLExt.join(baseUrl, "/resuse");
   
   function displayMetrics() {
 
     fetch(endpoint).then(response => {
     return response.json();
   }).then(data => {
-    text.innerText = (Math.round(data['rss'] / (1024 * 1024))).toString() + ' MB';
+    text.innerText = (Math.round(data['rss'] / (1024 * 1024))).toString() + ' MB'; //\nCPU%: ' + data['cpu_percent'];
   });
   }
 

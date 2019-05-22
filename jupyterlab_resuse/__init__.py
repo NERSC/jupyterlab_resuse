@@ -28,6 +28,6 @@ def load_jupyter_server_extension(nb_server_app):
     base_url = web_app.settings['base_url']
 
     web_app.add_handlers(host_pattern, [
-        (url_path_join(base_url, '/metrics'), MetricsHandler)
+        (url_path_join(base_url, '/resuse'), MetricsHandler)
         ])
 

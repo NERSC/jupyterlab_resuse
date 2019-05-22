@@ -18,6 +18,8 @@ class MetricsHandler(IPythonHandler):
         rss = sum([p.memory_info().rss for p in all_processes])
 
         limits = {}
+	
+	#cpu_percent = sum([p.cpu_percent(interval=0.1) for p in all_processes])
 
         if config.mem_limit != 0:
             limits['memory'] = {
@@ -27,6 +29,7 @@ class MetricsHandler(IPythonHandler):
                 limits['memory']['warn'] = (config.mem_limit - rss) < (config.mem_limit * config.mem_warning_threshold)
         metrics = {
             'rss': rss,
+	    #'cpu_percent': cpu_percent,
             'limits': limits,
         }
         self.write(json.dumps(metrics))
