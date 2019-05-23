@@ -34,9 +34,12 @@
     "@jupyterlab/application": "^0.19.1",
     "@jupyterlab/apputils": "^0.19.1",
     "@jupyterlab/coreutils": "^2.0.2",
+    "@phosphor/coreutils": "^1.3.0",
     "@phosphor/widgets": "^1.6.0",
+    "@types/canvasjs": "^1.9.5",
     "@types/jquery": "^3.3.4",
     "@types/node": "^11.13.7",
+    "canvasjs": "^1.8.1",
     "jquery": "^3.4.1"
   },
   "devDependencies": {

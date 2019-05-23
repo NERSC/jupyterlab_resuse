@@ -15,22 +15,16 @@ class MetricsHandler(IPythonHandler):
         config = self.settings['nbresuse_display_config']
         cur_process = psutil.Process()
         all_processes = [cur_process] + cur_process.children(recursive=True)
+
+        total_mem = psutil.virtual_memory()[0]
+        
         rss = sum([p.memory_info().rss for p in all_processes])
+        cpu_percent = sum([p.cpu_percent(interval=0.1) for p in all_processes])
 
-        limits = {}
-	
-	#cpu_percent = sum([p.cpu_percent(interval=0.1) for p in all_processes])
-
-        if config.mem_limit != 0:
-            limits['memory'] = {
-                'rss': config.mem_limit
-            }
-            if config.mem_warning_threshold != 0:
-                limits['memory']['warn'] = (config.mem_limit - rss) < (config.mem_limit * config.mem_warning_threshold)
         metrics = {
             'rss': rss,
-	    #'cpu_percent': cpu_percent,
-            'limits': limits,
+            'total_mem': total_mem,
+            'cpu_percent': cpu_percent,
         }
         self.write(json.dumps(metrics))
 

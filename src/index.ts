@@ -1,6 +1,5 @@
-
 import {
-  JupyterLab, JupyterLabPlugin
+  JupyterLab, JupyterLabPlugin, ILayoutRestorer
 } from '@jupyterlab/application';
 
 import {
@@ -17,38 +16,44 @@ import {
 
 import '../style/index.css';
 
-
-
-/**
- * Initialization data for the jupyterlab_xkcd extension.
- */
-const extension: JupyterLabPlugin<void> = {
-  id: 'jupyterlab_resuse',
-  autoStart: true,
-  requires: [ICommandPalette],
-  activate: (app: JupyterLab, palette: ICommandPalette) => {
-    console.log('JupyterLab extension jupyterlab_xkcd is activated!');
-
+  
+function activate(
+    app: JupyterLab,
+    palette: ICommandPalette,
+    restorer: ILayoutRestorer
+  ) {
   // Create a single widget
   let widget: Widget = new Widget();
   widget.id = 'jupyterlab-resuse';
   widget.title.label = 'Resource Usage';
   widget.title.closable = true;
 
-  let text = document.createElement("span");
+  //this.chart = document.createElement("canvas");
+
+
+  let text = document.createElement("div");
   widget.node.appendChild(text);
 
 
     let baseUrl = PageConfig.getOption('baseUrl');
     let endpoint = URLExt.join(baseUrl, "/resuse");
   
+  
+
   function displayMetrics() {
 
     fetch(endpoint).then(response => {
     return response.json();
   }).then(data => {
-    text.innerText = (Math.round(data['rss'] / (1024 * 1024))).toString() + ' MB'; //\nCPU%: ' + data['cpu_percent'];
+    let usedMb = (Math.round(data['rss'] / (1024 * 1024))).toString();
+    let totalMem = (Math.round(data['total_mem'] / (1024 * 1024))).toString();
+    let cpuPct = (data['cpu_percent']).toString();
+    let memoryLine = usedMb + ' MB used out of ' + totalMem + ' MB total';
+    let cpuLine = 'CPU: ' + cpuPct + '% of a single processor';
+    text.innerText = memoryLine + '\n' + cpuLine;
   });
+
+
   }
 
   setInterval(displayMetrics, 1000);
@@ -70,7 +75,15 @@ const extension: JupyterLabPlugin<void> = {
   // Add the command to the palette.
   palette.addItem({command, category: 'HPC Tools'});
 
-  }
-};
+} // activate
 
-export default extension;
+/**
+ * Initialization data for the jupyterlab_resuse extension.
+ */
+const extension: JupyterLabPlugin<void> = {
+  id: 'jupyterlab_resuse',
+  autoStart: true,
+  requires: [ICommandPalette],
+  activate: activate };
+
+  export default extension;
