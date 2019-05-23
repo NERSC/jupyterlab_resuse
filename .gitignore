@@ -17,7 +17,7 @@ pip-delete-this-directory.txt
 .cache
 yarn-error.log
 yarn.lock
-
+package-lock.json
 
 # distribution/packaging
 node_modules/

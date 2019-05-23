@@ -7,52 +7,87 @@ import {
 } from '@jupyterlab/coreutils';
 
 import {
-  ICommandPalette
+  ICommandPalette, InstanceTracker
 } from '@jupyterlab/apputils';
+
+import {
+  JSONExt
+} from '@phosphor/coreutils';
 
 import {
   Widget
 } from '@phosphor/widgets';
 
+import {
+  Chart
+} from 'chart.js'
+
 import '../style/index.css';
 
-  
+class resuseWidget extends Widget {
+
+  constructor() {
+    super();
+
+    this.id = 'jupyterlab-resuse';
+    this.title.label = 'Resource Usage';
+    this.title.closable = true;
+    this.addClass('jp-resuseWidget');
+
+    this.chart = document.createElement("canvas");
+    this.chart.className ='jp-resuseChart';
+    this.node.appendChild(this.chart);
+
+    this.text = document.createElement("div");
+    this.text.className = 'jp-resuseDescription';
+    this.node.appendChild(this.text);
+
+  }
+
+  public chart: HTMLCanvasElement;
+  public text: HTMLElement;
+};
+ 
 function activate(
     app: JupyterLab,
     palette: ICommandPalette,
     restorer: ILayoutRestorer
   ) {
   // Create a single widget
-  let widget: Widget = new Widget();
-  widget.id = 'jupyterlab-resuse';
-  widget.title.label = 'Resource Usage';
-  widget.title.closable = true;
+  // let widget: resuseWidget = new resuseWidget();
+  let widget: resuseWidget;
 
-  //this.chart = document.createElement("canvas");
-
-
-  let text = document.createElement("div");
-  widget.node.appendChild(text);
-
-
-    let baseUrl = PageConfig.getOption('baseUrl');
-    let endpoint = URLExt.join(baseUrl, "/resuse");
-  
-  
+  let baseUrl = PageConfig.getOption('baseUrl');
+  let endpoint = URLExt.join(baseUrl, "/resuse");
 
   function displayMetrics() {
 
     fetch(endpoint).then(response => {
     return response.json();
   }).then(data => {
-    let usedMb = (Math.round(data['rss'] / (1024 * 1024))).toString();
-    let totalMem = (Math.round(data['total_mem'] / (1024 * 1024))).toString();
-    let cpuPct = (data['cpu_percent']).toString();
-    let memoryLine = usedMb + ' MB used out of ' + totalMem + ' MB total';
-    let cpuLine = 'CPU: ' + cpuPct + '% of a single processor';
-    text.innerText = memoryLine + '\n' + cpuLine;
-  });
+    let usedMb = (Math.round(data['rss'] / (1024 * 1024)));
+    let totalMem = (Math.round(data['total_mem'] / (1024 * 1024)));
+    let cpuPct = (data['cpu_percent']);
+    let memoryLine = usedMb.toString() + ' MB used out of ' + totalMem.toString() + ' MB total';
+    let cpuLine = 'CPU: ' + cpuPct.toString() + '% of a single processor';
+    widget.text.innerText = memoryLine + '\n' + cpuLine;
 
+    let values = {"labels":["Memory Usage", "CPU Usage"], 
+    "datasets": [{"label":"Resource Usage", "data":[usedMb/totalMem*100, cpuPct], 
+    "backgroundColor": ['rgb(255, 159, 64)', 'rgb(54, 162, 235)']}] };
+
+    let options = {"scales": {"yAxes":[{"scaleLabel":{"display": true, "labelString": "Percentage"}, 
+    "ticks": {"min": 0, "max": 100}}]}, "title": {"display": true, "text": "Resource Usage"},  
+    "animation":{"duration":0}, "events":[], "legend":{"display": false}};
+
+    let myChart = new Chart(widget.chart, {
+      "type": 'bar',    
+      "data": values,
+      "options": options,
+    });
+    // otherwise TypeScript complains that the variable myChart isn't used
+    console.log(myChart);
+  });
 
   }
 
@@ -63,9 +98,18 @@ function activate(
   app.commands.addCommand(command, {
     label: 'Resource usage',
     execute: () => {
+      if (!widget) {
+        widget = new resuseWidget();
+        widget.update();
+      }
+      if (!tracker.has(widget)) {
+        tracker.add(widget);
+      }
       if (!widget.isAttached) {
         // Attach the widget to the main work area if it's not there
         app.shell.addToMainArea(widget);
+      } else {
+        widget.update();
       }
       // Activate the widget
       app.shell.activateById(widget.id);
@@ -75,7 +119,14 @@ function activate(
   // Add the command to the palette.
   palette.addItem({command, category: 'HPC Tools'});
 
-} // activate
+  let tracker = new InstanceTracker<resuseWidget>({ "namespace": "resuse"});
+  restorer.restore(tracker, {
+    command,
+    "args": () => JSONExt.emptyObject,
+    "name": () => 'resuse'
+  });
+
+}; // activate
 
 /**
  * Initialization data for the jupyterlab_resuse extension.
@@ -83,7 +134,7 @@ function activate(
 const extension: JupyterLabPlugin<void> = {
   id: 'jupyterlab_resuse',
   autoStart: true,
-  requires: [ICommandPalette],
+  requires: [ICommandPalette, ILayoutRestorer],
   activate: activate };
 
   export default extension;
