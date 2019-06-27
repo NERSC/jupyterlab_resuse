@@ -7,6 +7,8 @@ from traitlets.config import Configurable
 
 from notebook.base.handlers import IPythonHandler
 
+from tornado.log import app_log
+
 class MetricsHandler(IPythonHandler):
     def get(self):
         """
@@ -15,10 +17,21 @@ class MetricsHandler(IPythonHandler):
         cur_process = psutil.Process()
         all_processes = [cur_process] + cur_process.children(recursive=True)
 
-        total_mem = psutil.virtual_memory()[0]
-        
+        for process in all_processes:
+            app_log.info("this process has name %s", process.name())
+
+        total_mem = psutil.virtual_memory().total        
+
+        used_mem = psutil.virtual_memory().used
+        app_log.info("used mem is %s", used_mem)
+
         rss = sum([p.memory_info().rss for p in all_processes])
+        app_log.info("rss is %s", rss) 
+
         cpu_percent = sum([p.cpu_percent(interval=0.1) for p in all_processes])
+
+        num_users = len(psutil.users())
+        app_log.info("num_users is %s", num_users)
 
         metrics = {
             'rss': rss,
