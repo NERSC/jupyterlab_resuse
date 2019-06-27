@@ -32,10 +32,15 @@ class MetricsHandler(IPythonHandler):
 
         num_users = len(psutil.users())
         app_log.info("num_users is %s", num_users)
+        users = psutil.users()
+        app_log.info("users is %s", str(users))
 
         metrics = {
             'rss': rss,
             'total_mem': total_mem,
             'cpu_percent': cpu_percent,
+            'used_mem': used_mem,
+            'num_users': num_users,
+            'users' : users,
         }
         self.write(json.dumps(metrics))

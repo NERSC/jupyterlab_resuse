@@ -68,9 +68,16 @@ function activate(
     let usedMb = (Math.round(data['rss'] / (1024 * 1024)));
     let totalMem = (Math.round(data['total_mem'] / (1024 * 1024)));
     let cpuPct = (data['cpu_percent']);
+    let systemUsedMem = (Math.round(data['used_mem'] / (1024 * 1024)));
+    let numUsers = data['num_users'];
+    let users = data['users'];
+
     let memoryLine = usedMb.toString() + ' MB used out of ' + totalMem.toString() + ' MB total';
     let cpuLine = 'CPU: ' + cpuPct.toString() + '% of a single processor';
-    widget.text.innerText = memoryLine + '\n' + cpuLine;
+    let usedMemLine = systemUsedMem.toString() + ' MB used everywhere on the system out of ' + totalMem.toString() + ' MB total';
+    let numUsersLine = numUsers.toString() + ' users currently using the system' 
+
+    widget.text.innerText = memoryLine + '\n' + cpuLine + \n + usedMemLine + \n + numUsersLine;
 
     let values = {"labels":["Memory Usage", "CPU Usage"], 
     "datasets": [{"label":"Resource Usage", "data":[usedMb/totalMem*100, cpuPct], 
