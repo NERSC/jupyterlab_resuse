@@ -76,8 +76,9 @@ function activate(
     let cpuLine = 'CPU: ' + cpuPct.toString() + '% of a single processor';
     let usedMemLine = systemUsedMem.toString() + ' MB used everywhere on the system out of ' + totalMem.toString() + ' MB total';
     let numUsersLine = numUsers.toString() + ' users currently using the system' 
+    let usersLine = users.toString() + ' is what "users" variable looks like'
 
-    widget.text.innerText = memoryLine + '\n' + cpuLine + \n + usedMemLine + \n + numUsersLine;
+    widget.text.innerText = memoryLine + '\n' + cpuLine + '\n' + usedMemLine + '\n' + numUsersLine + '\n' + usersLine;
 
     let values = {"labels":["Memory Usage", "CPU Usage"], 
     "datasets": [{"label":"Resource Usage", "data":[usedMb/totalMem*100, cpuPct], 
