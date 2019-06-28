@@ -35,12 +35,21 @@ class MetricsHandler(IPythonHandler):
         users = psutil.users()
         app_log.info("users is %s", str(users))
 
+        num_labhub = 0
+        for process in psutil.process_iter(attrs=["cmdline"]):
+            for token in process.info["cmdline"]:
+                if "jupyter-labhub" in token:
+                    print(process.info["cmdline"])
+                    num_labhub += 1
+                    break
+
         metrics = {
             'rss': rss,
             'total_mem': total_mem,
             'cpu_percent': cpu_percent,
             'used_mem': used_mem,
             'num_users': num_users,
+            'num_labhub' : num_labhub,
             'users' : users,
         }
         self.write(json.dumps(metrics))
