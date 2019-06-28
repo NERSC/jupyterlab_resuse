@@ -89,7 +89,8 @@ function activate(
 
     let options = {"scales": {"yAxes":[{"scaleLabel":{"display": true, "labelString": "Percentage"}, 
     "ticks": {"min": 0, "max": 100}}]}, "title": {"display": true, "text": "Resource Usage"},  
-    "animation":{"duration":0}, "events":[], "legend":{"display": false}};
+    "animation":{"duration":0}, "events":[], "legend":{"display": false},
+     "annotation":{"annotations":[{"type":"line", "mode":"horizontal", "value": 0.5}]}};
 
     let myChart = new Chart(widget.chart, {
       "type": 'bar',    
