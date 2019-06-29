@@ -42,6 +42,7 @@
     "@types/node": "^11.13.7",
     "canvasjs": "^1.8.1",
     "chart.js": "^2.8.0",
+    "chartjs-plugin-annotation": "^0.5.7",
     "jquery": "^3.4.1"
   },
   "devDependencies": {

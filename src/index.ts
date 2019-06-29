@@ -20,7 +20,9 @@ import {
 
 import {
   Chart
-} from 'chart.js'
+} from 'chart.js';
+
+import 'chartjs-plugin-annotation';
 
 import '../style/index.css';
 
@@ -90,7 +92,9 @@ function activate(
     let options = {"scales": {"yAxes":[{"scaleLabel":{"display": true, "labelString": "Percentage"}, 
     "ticks": {"min": 0, "max": 100}}]}, "title": {"display": true, "text": "Resource Usage"},  
     "animation":{"duration":0}, "events":[], "legend":{"display": false},
-     "annotation":{"annotations":[{"type":"line", "mode":"horizontal", "value": 0.5}]}};
+     "annotation":{"annotations":[{"type":"line", "mode":"horizontal", "value": 50,
+           "scaleID":"y-axis-0", "borderColor":"rgb(75, 192, 192)",
+            "borderWidth":4, "label": {"enabled": true, "content": "Target for maximum individual usage"} }]}};
 
     let myChart = new Chart(widget.chart, {
       "type": 'bar',    
