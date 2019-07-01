@@ -36,9 +36,13 @@ class resuseWidget extends Widget {
     this.title.closable = true;
     this.addClass('jp-resuseWidget');
 
-    this.chart = document.createElement("canvas");
-    this.chart.className ='jp-resuseChart';
-    this.node.appendChild(this.chart);
+    this.memChart = document.createElement("canvas");
+    this.memChart.className ='jp-resuseChart';
+    this.node.appendChild(this.memChart);
+
+    this.cpuChart = document.createElement("canvas");
+    this.cpuChart.className = 'jp-resuseChart';
+    this.node.appendChild(this.cpuChart);
 
     this.text = document.createElement("div");
     this.text.className = 'jp-resuseDescription';
@@ -46,7 +50,8 @@ class resuseWidget extends Widget {
 
   }
 
-  public chart: HTMLCanvasElement;
+  public memChart: HTMLCanvasElement;
+  public cpuChart: HTMLCanvasElement;
   public text: HTMLElement;
 };
  
@@ -71,38 +76,46 @@ function activate(
     let totalMem = (Math.round(data['total_mem'] / (1024 * 1024)));
     let cpuPct = (data['cpu_percent']);
     let systemUsedMem = (Math.round(data['used_mem'] / (1024 * 1024)));
-    let numUsers = data['num_users'];
-    let users = data['users'];
     let num_labhub = data['num_labhub'];
 
-
-    let memoryLine = usedMb.toString() + ' MB used out of ' + totalMem.toString() + ' MB total';
-    let cpuLine = 'CPU: ' + cpuPct.toString() + '% of a single processor';
+    let memoryLine = usedMb.toString() + ' MB used by Jupyter out of ' + totalMem.toString() + ' MB total';
     let usedMemLine = systemUsedMem.toString() + ' MB used everywhere on the system out of ' + totalMem.toString() + ' MB total';
-    let numUsersLine = numUsers.toString() + ' users currently using the system' 
-    let usersLine = users.toString() + ' is what "users" variable looks like'
-    let labhubLine = num_labhub.toString() + ' is what "num_labhub" variable looks like'
+    let cpuLine = 'CPU: ' + cpuPct.toString() + '% of a single processor';
+    let labhubLine = num_labhub.toString() + ' users currently using the system'
 
-    widget.text.innerText = memoryLine + '\n' + cpuLine + '\n' + usedMemLine + '\n' + numUsersLine + '\n' + usersLine + '\n' + labhubLine;
+    widget.text.innerText = memoryLine + '\n' + usedMemLine + '\n' + cpuLine + '\n' + labhubLine;
 
-    let values = {"labels":["Memory Usage", "CPU Usage"], 
-    "datasets": [{"label":"Resource Usage", "data":[usedMb/totalMem*100, cpuPct], 
-    "backgroundColor": ['rgb(255, 159, 64)', 'rgb(54, 162, 235)']}] };
+    let memValues = {"labels":[""], 
+    "datasets": [{"label":"", "data":[usedMb/totalMem*100], 
+    "backgroundColor": ['rgb(255, 159, 64)']}] };
 
-    let options = {"scales": {"yAxes":[{"scaleLabel":{"display": true, "labelString": "Percentage"}, 
-    "ticks": {"min": 0, "max": 100}}]}, "title": {"display": true, "text": "Resource Usage"},  
+    let cpuValues = {"labels":[], 
+    "datasets": [{"label":"", "data":[cpuPct],
+    "backgroundColor": ['rgb(54, 162, 235)']}] };
+
+    let memOptions = {"scales": {"yAxes":[{"scaleLabel":{"display": true, "labelString": "Percentage"}, 
+    "ticks": {"min": 0, "max": 100}}]}, "title": {"display": true, "text": "Memory Usage"},  
     "animation":{"duration":0}, "events":[], "legend":{"display": false},
      "annotation":{"annotations":[{"type":"line", "mode":"horizontal", "value": 50,
            "scaleID":"y-axis-0", "borderColor":"rgb(75, 192, 192)",
             "borderWidth":4, "label": {"enabled": true, "content": "Target for maximum individual usage"} }]}};
 
-    let myChart = new Chart(widget.chart, {
+    let cpuOptions = {"scales": {"yAxes":[{"scaleLabel":{"display": true, "labelString": "Percentage"}, 
+    "ticks": {"min": 0, "max": 100}}]}, "title": {"display": true, "text": "CPU Usage"},  
+    "animation":{"duration":0}, "events":[], "legend":{"display": false}};
+
+    let myChart = new Chart(widget.memChart, {
       "type": 'bar',    
-      "data": values,
-      "options": options,
+      "data": memValues,
+      "options": memOptions,
+    });
+    let mySecondChart = new Chart(widget.cpuChart, {
+      "type" : 'bar',
+      "data" : cpuValues,
+      "options": cpuOptions,
     });
     // otherwise TypeScript complains that the variable myChart isn't used
-    console.log(myChart);
+    console.log(myChart, mySecondChart);
   });
 
   }
