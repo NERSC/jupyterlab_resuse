@@ -4,10 +4,11 @@
   overflow: auto;
 }
 
-.jp-resuseChart {
-  margin: auto;
+.jp-resuseChartContainer {
+  margin: 2%;
 }
 
 .jp-resuseDescription {
-  margin: auto;
+  align-self: center;
+  margin-bottom: 2%;
 }
