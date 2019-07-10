@@ -81,7 +81,7 @@ function activate(
   let widget: resuseWidget;
 
   let baseUrl = PageConfig.getOption('baseUrl');
-  let endpoint = URLExt.join(baseUrl, "/resuse");
+  let endpoint = URLExt.join(baseUrl, "/metrics");
 
   function displayMetrics() {
 
@@ -94,14 +94,14 @@ function activate(
 
     let cpuPct = Math.round(data['cpu_percent']);
 
-    let num_labhub = data['num_labhub'];
+    let num_users = data['num_users'];
 
-    let targetMemPct = 100/num_labhub;
+    let targetMemPct = 100/num_users;
 
     let memoryLine = userUsedMem.toString() + ' MB used by Jupyter out of ' + totalMem.toString() + ' MB total';
     let usedMemLine = systemUsedMem.toString() + ' MB used everywhere on the system out of ' + totalMem.toString() + ' MB total';
     let cpuLine = 'CPU: ' + cpuPct.toString() + '% of a single processor';
-    let labhubLine = num_labhub.toString() + ' users currently using the system'
+    let labhubLine = num_users.toString() + ' users currently using the system'
 
     widget.text.innerText = memoryLine + '\n' + usedMemLine + '\n' + cpuLine + '\n' + labhubLine;
 
