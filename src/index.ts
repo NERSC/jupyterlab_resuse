@@ -1,5 +1,5 @@
 import {
-  JupyterLab, JupyterLabPlugin, ILayoutRestorer
+  JupyterFrontEnd, JupyterFrontEndPlugin, ILayoutRestorer
 } from '@jupyterlab/application';
 
 import {
@@ -7,7 +7,7 @@ import {
 } from '@jupyterlab/coreutils';
 
 import {
-  ICommandPalette, InstanceTracker
+  ICommandPalette, WidgetTracker
 } from '@jupyterlab/apputils';
 
 import {
@@ -158,7 +158,7 @@ function activate(
       }
       if (!widget.isAttached) {
         // Attach the widget to the main work area if it's not there
-        app.shell.addToMainArea(widget);
+        app.shell.add(widget);
       } else {
         widget.update();
       }
