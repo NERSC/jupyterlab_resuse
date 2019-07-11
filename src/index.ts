@@ -72,7 +72,7 @@ class resuseWidget extends Widget {
 };
  
 function activate(
-    app: JupyterLab,
+    app: JupyterFrontEnd,
     palette: ICommandPalette,
     restorer: ILayoutRestorer
   ) {
@@ -170,7 +170,7 @@ function activate(
   // Add the command to the palette.
   palette.addItem({command, category: 'HPC Tools'});
 
-  let tracker = new InstanceTracker<resuseWidget>({ "namespace": "resuse"});
+  let tracker = new WidgetTracker<resuseWidget>({ "namespace": "resuse"});
   restorer.restore(tracker, {
     command,
     "args": () => JSONExt.emptyObject,
@@ -182,7 +182,7 @@ function activate(
 /**
  * Initialization data for the jupyterlab_resuse extension.
  */
-const extension: JupyterLabPlugin<void> = {
+const extension: JupyterFrontEndPlugin<void> = {
   id: 'jupyterlab_resuse',
   autoStart: true,
   requires: [ICommandPalette, ILayoutRestorer],
