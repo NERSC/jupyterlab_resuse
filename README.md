@@ -1,21 +1,9 @@
 # Installation
-Make sure you have dependencies installed, e.g. `conda install jupyterlab nodejs psutil`. 
 
-Then to install the server extension (i.e. the Python part), do:
+No concise installation instructions available at the moment. Full Docker image (whose Dockerfiles contain installation instructions implicitly) can be found [here](https://github.com/krinsman/jupyterhub-deploy/tree/master/resuse), which you can test this locally. This is in part because it requires [my fork of nbresuse](https://github.com/yuvipanda/nbresuse/compare/master...krinsman:master) to run.
 
-    pip install -e .
-    jupyter serverextension enable jupyterlab_resuse --sys-prefix
+Here is a picture with a link to a YouTube video which demos the extension:
 
-(I am aware I should be more consistent in choosing between the hyphen and the underscore, i.e. `jupyterlab-resuse` and `jupyterlab_resuse`. I myself have forgotten where one is used and where the other is used.)
-
-To install the lab extension (i.e. the TypeScript part), do:
-
-    jlpm install
-    jlpm run build
-    jupyter labextension install .
-
-This should be sufficient for a development install too; if you want to update after changing the TypeScript code you can run `jupyter lab build`.
-
-[This page](https://jupyterlab.readthedocs.io/en/stable/developer/extension_dev.html) also has recommendations about how to use `jupyter lab --watch` or `jupyter labextension link .` during development.
+[![JupyterLab Resuse Demo](docs/jupyterlab_resuse.png)](https://youtu.be/xJeN74vQ1EA)
 
 Basically a modification of [nbresuse](https://github.com/yuvipanda/nbresuse), with inspiration from [jupyterlab-slurm](https://github.com/NERSC/jupyterlab-slurm) (which I also contributed to). Chart.js documentation and [examples](https://www.chartjs.org/samples/latest/) were helpful as well.
